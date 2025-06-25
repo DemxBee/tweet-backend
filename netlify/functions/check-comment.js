@@ -22,4 +22,4 @@ module.exports = async function (req, res) {
     res.end(JSON.stringify({ error: error.message || 'Twitter API error' }));
   }
 };
-Fix: use CommonJS syntax for Netlify Functions
+
