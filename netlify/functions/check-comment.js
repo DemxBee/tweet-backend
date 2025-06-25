@@ -1,7 +1,9 @@
-const axios = require('axios');
+const axios = require("axios");
 
-module.exports = async function (req, res) {
-  const { tweetId, username } = req.query;
+exports.handler = async function (event, context) {
+  const params = event.queryStringParameters;
+  const tweetId = params.tweetId;
+  const username = params.username;
 
   const BEARER_TOKEN = decodeURIComponent('AAAAAAAAAAAAAAAAAAAAAI7W0EAAAAA%2BulGuBjdJsBkpp4icVi9HMXMGdM%3Dtqg4dbQGeHGJ');
   const query = conversation_id:${tweetId} from:${username};
@@ -9,17 +11,21 @@ module.exports = async function (req, res) {
 
   try {
     const response = await axios.get(url, {
-      headers: { Authorization: Bearer ${BEARER_TOKEN} }
+      headers: {
+        Authorization: Bearer ${BEARER_TOKEN},
+      },
     });
 
     const replies = response.data?.data || [];
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ username, replies }));
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ username, replies }),
+    };
   } catch (error) {
-    res.statusCode = 500;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ error: error.message || 'Twitter API error' }));
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message || "Twitter API error" }),
+    };
   }
 };
-
